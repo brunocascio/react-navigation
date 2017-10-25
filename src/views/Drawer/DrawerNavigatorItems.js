@@ -26,8 +26,10 @@ type Props = {
   getLabel: (scene: DrawerScene) => ?(React.Element<*> | string),
   renderIcon: (scene: DrawerScene) => ?React.Element<*>,
   onItemPress: (info: DrawerItem) => void,
-  style?: ViewStyleProp,
+  itemsContainerStyle?: ViewStyleProp,
+  itemStyle?: ViewStyleProp,
   labelStyle?: TextStyleProp,
+  iconContainerStyle?: ViewStyleProp,
 };
 
 /**
@@ -44,10 +46,12 @@ const DrawerNavigatorItems = ({
   getLabel,
   renderIcon,
   onItemPress,
-  style,
+  itemsContainerStyle,
+  itemStyle,
   labelStyle,
-}: Props) =>
-  <View style={[styles.container, style]}>
+  iconContainerStyle
+}: Props) => (
+  <View style={[styles.container, itemsContainerStyle]}>
     {items.map((route: NavigationRoute, index: number) => {
       const focused = activeItemKey === route.key;
       const color = focused ? activeTintColor : inactiveTintColor;
@@ -65,24 +69,29 @@ const DrawerNavigatorItems = ({
           }}
           delayPressIn={0}
         >
-          <View style={[styles.item, { backgroundColor }]}>
-            {icon
-              ? <View
-                  style={[styles.icon, focused ? null : styles.inactiveIcon]}
-                >
-                  {icon}
-                </View>
-              : null}
-            {typeof label === 'string'
-              ? <Text style={[styles.label, { color }, labelStyle]}>
-                  {label}
-                </Text>
-              : label}
+          <View style={[styles.item, { backgroundColor }, itemStyle]}>
+            {icon ? (
+              <View 
+                style={[
+                  styles.icon, 
+                  focused ? null : styles.inactiveIcon, 
+                  iconContainerStyle
+                ]}
+              >
+                {icon}
+              </View>
+            ) : null}
+            {typeof label === 'string' ? (
+              <Text style={[styles.label, { color }, labelStyle]}>{label}</Text>
+            ) : (
+              label
+            )}
           </View>
         </TouchableItem>
       );
     })}
-  </View>;
+  </View>
+);
 
 /* Material design specs - https://material.io/guidelines/patterns/navigation-drawer.html#navigation-drawer-specs */
 DrawerNavigatorItems.defaultProps = {
